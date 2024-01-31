@@ -377,28 +377,29 @@ public class RobotContainer {
 
     OI.povButtonUp.whileTrue(PivoterRotateUp);
     OI.povButtonDown.whileTrue(pivotMin);  
-    OI.povButtonLeft.whileTrue(retractExtender);
-    OI.povButtonRight.whileTrue(extendExtender);
-    OI.triggerAux.whileTrue(suck);
-    // OI.triggerAux.onFalse();
+    // OI.povButtonLeft.whileTrue(retractExtender);
+    // OI.povButtonRight.whileTrue(extendExtender);
+    // OI.triggerAux.whileTrue(suck);
+    // // OI.triggerAux.onFalse();
     
 
 
-    OI.button2Aux.whileTrue(spit); // Open grabber 
-    // OI.button4Aux.toggleOnTrue(grabCone); // Grab at a strong grip. 
-    // OI.button5Aux.onTrue(stopGrabber);
-    OI.button3Aux.onTrue(goToGround); // Pivot to the ground position. 
-    OI.button4Aux.onTrue(goToFeeder);
-    OI.button5Aux.onTrue(stowArm);
-    //OI.button6Aux.whileTrue(autoGrab);
-    OI.button6Aux.onTrue(stowGroundArm);
+    // OI.button2Aux.whileTrue(spit); // Open grabber 
+    // // OI.button4Aux.toggleOnTrue(grabCone); // Grab at a strong grip. 
+    // // OI.button5Aux.onTrue(stopGrabber);
+    // OI.button3Aux.onTrue(goToGround); // Pivot to the ground position. 
+    // OI.button4Aux.onTrue(goToFeeder);
+    // OI.button5Aux.onTrue(stowArm);
+    // //OI.button6Aux.whileTrue(autoGrab);
+    // OI.button6Aux.onTrue(stowGroundArm);
 
+    OI.button7Aux.onTrue(goToFeeder);
 
-    OI.button7Aux.onTrue(goToHighCone);
-    OI.button8Aux.onTrue(goToMidCone);
-    OI.button9Aux.onTrue(goToHighCube);
-    OI.button10Aux.onTrue(goToMidCube);
-    OI.button11Aux.onTrue(goToLow);
+    // OI.button7Aux.onTrue(goToHighCone);
+    // OI.button8Aux.onTrue(goToMidCone);
+    // OI.button9Aux.onTrue(goToHighCube);
+    // OI.button10Aux.onTrue(goToMidCube);
+    // OI.button11Aux.onTrue(goToLow);
     OI.button12Aux.whileTrue(stopFeedForward);
     // OI.button12Aux.onTrue(new SequentialCommandGroup(new InstantCommand(grabberSub::stopMotor, grabberSub), new InstantCommand(grabberSub::resetGrabberDistance, grabberSub)));
 
