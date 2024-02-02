@@ -43,7 +43,7 @@ public class PivoterSubsystem extends SubsystemBase {
   private static final boolean INVERT_MOTOR = true;
 
   // Voltage needed to maintain horizontal arm position.
-  private static final double horizontalArbFF = 0.00;
+  private static final double horizontalArbFF = 0.30;
 
   public PivoterSubsystem() {
     pivoterMotor.setInverted(false);
@@ -76,15 +76,15 @@ public class PivoterSubsystem extends SubsystemBase {
     return degrees / PivoterConstants.kPivoterRotationToDegree;
   }
 
-  private double motorRotationsToDegrees(double rotations) {
+  public double motorRotationsToDegrees(double rotations) {
     // return (rotations / GEAR_RATIO) * DEGREES_PER_REV;
     return rotations * PivoterConstants.kPivoterRotationToDegree;
   }
 
     //  Run the motor to our inputted degrees. 
-  public void pivot(double degrees) {
+  public void pivot(double rotations) {
     m_pidController.setReference(
-      degreesToMotorRotations(degrees),
+      rotations,
       // CANSparkMax.ControlType.kPosition,
       CANSparkMax.ControlType.kSmartMotion,
       SMART_MOTION_SLOT,
@@ -98,13 +98,13 @@ public class PivoterSubsystem extends SubsystemBase {
    * @return Arbitrary Feed-Forward (Volts)
    */
   public double getArbFF() {
-    double degrees = getPosition();
+    double degrees = getPositionDegrees();
     double radians = Math.toRadians(degrees);
 
     return Math.cos(radians) * horizontalArbFF;
   }
 
-  public double getPosition() {
+  public double getPositionDegrees() {
     return motorRotationsToDegrees(pivoterEncoder.getPosition());
   }
 

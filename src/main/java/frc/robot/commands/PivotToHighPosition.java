@@ -13,28 +13,42 @@ import frc.robot.Constants.PivoterConstants;
 public class PivotToHighPosition extends Command {
   /** Creates a new PivotToHighPosition. */
   private final PivoterSubsystem pivoterSub;
-  private final double setpoint;
+  private final double targetPosition;
+  private final int PIVOTER_ANGLE_TOLERANCE = 1;
+  private final int TARGET_POSITION_COUNT_THRESHOLD = 10;
+  private int targetPositionCount;
+
   public PivotToHighPosition(PivoterSubsystem pivoterSub, double target) {
     this.pivoterSub = pivoterSub;
-    setpoint = target;
+    targetPosition = target;
     addRequirements(pivoterSub);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    targetPositionCount = 0;
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    pivoterSub.pivot(0.5); // set to max speed. 
+    pivoterSub.pivot(targetPosition); // setpoint is rotations.
+    
+    double currPositionDegrees = pivoterSub.getPositionDegrees();
+    double targetPositionDegrees = pivoterSub.motorRotationsToDegrees(targetPosition);
+    double pivoterPositionError = Math.abs(targetPositionDegrees - currPositionDegrees);
+    if (pivoterPositionError < PIVOTER_ANGLE_TOLERANCE){
+      targetPositionCount++;
+    }
+
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    pivoterSub.addFeedFoward();
+    //pivoterSub.addFeedFoward();
     // pivoterSub.re
   }
 
@@ -44,6 +58,7 @@ public class PivotToHighPosition extends Command {
     if(pivoterSub.getPivoterRotation() >= PivoterConstants.kPivoterMaxValue){
       return true;
     }
-    return (pivoterSub.getPivoterRotation() >= setpoint);
+    return (pivoterSub.getPivoterRotation() >= targetPosition) ||
+            (targetPositionCount > TARGET_POSITION_COUNT_THRESHOLD);
   }
 }
