@@ -43,7 +43,7 @@ public class PivoterSubsystem extends SubsystemBase {
   // private static final boolean INVERT_MOTOR = true;
 
   // Voltage needed to maintain horizontal arm position.
-  private static final double horizontalArbFF = 0.30; //???
+  private static final double horizontalArbFF = 0.00; //???
 
   public PivoterSubsystem() {
     pivoterMotor.setInverted(false);
