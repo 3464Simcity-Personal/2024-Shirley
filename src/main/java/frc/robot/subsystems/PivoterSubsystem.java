@@ -27,7 +27,7 @@ public class PivoterSubsystem extends SubsystemBase {
   
   private final SparkMaxPIDController m_pidController;
 
-  private Gains gains = new Gains(1.5e-4, 3e-6, 0.000156, 0, 1, 0.75); //smart motion gains
+  private Gains gains = new Gains(1.0e-3, 3e-6, 0.000156, 0, 1, 0.75); //smart motion gains
 
   private static final int SMART_MOTION_SLOT = 0;
 
@@ -43,7 +43,7 @@ public class PivoterSubsystem extends SubsystemBase {
   // private static final boolean INVERT_MOTOR = true;
 
   // Voltage needed to maintain horizontal arm position.
-  private static final double horizontalArbFF = 0.00; //???
+  private static final double horizontalArbFF = 0.30; //???
 
   public PivoterSubsystem() {
     pivoterMotor.setInverted(false);
@@ -101,7 +101,7 @@ public class PivoterSubsystem extends SubsystemBase {
     double degrees = getPositionDegrees();
     double radians = Math.toRadians(degrees);
 
-    return Math.cos(radians) * horizontalArbFF;
+    return Math.sin(radians) * horizontalArbFF;
   }
 
   public double getPositionDegrees() {

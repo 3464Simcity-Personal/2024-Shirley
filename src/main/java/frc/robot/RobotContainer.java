@@ -321,7 +321,7 @@ public class RobotContainer {
   public final Command goToMidCube = new SequentialCommandGroup(/*new CloseGrabberCone(grabberSub),*/ pivotToMidCube /*extendToMidCube*/);
   public final Command goToLow = new SequentialCommandGroup(/*new CloseGrabberCone(grabberSub), */pivotToLow, extendToLow);
   public final Command goToGround = new SequentialCommandGroup(pivotUpToGround, /*new OpenGrabber(grabberSub), */ extendToGround /*openGrabber, pivotDownToGround*/);
-  public final Command goToFeeder = new SequentialCommandGroup(new PivotToHighPosition(pivoterSub, 2/*PivoterConstants.kFeedPivoterValue*/)/*,new OpenGrabber(grabberSub)*/);
+  public final Command goToFeeder = new SequentialCommandGroup(new PivotToHighPosition(pivoterSub, PivoterConstants.kFeedPivoterValue)/*,new OpenGrabber(grabberSub)*/);
 
   /*
    * Auto Sequences
