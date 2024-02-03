@@ -32,18 +32,18 @@ public class PivoterSubsystem extends SubsystemBase {
   private static final int SMART_MOTION_SLOT = 0;
 
   // SmartMotion configs
-  private static final double MAX_VELOCITY_RPM = 5_676; // NEO free speed 5676 RPM
+  private static final double MAX_VELOCITY_RPM = 2_000; // NEO free speed 5676 RPM
   private static final double MIN_VELOCITY_RPM = 0;
-  private static final double MAXX_ACCELERATION_RPM_PER_SEC = 30_000;
+  private static final double MAX_ACCELERATION_RPM_PER_SEC = 1_500;
   private static final double ALLOWED_ERROR = 0.1; //motor rotations
 
-  private static final double GEAR_RATIO = (5.0/1.0) * (3.0/1.0) * (54.0 / 22.0) * (74.0 / 16.0);
-  private static final double DEGREES_PER_REV = 360.0;
-  private static final int CURRENT_LIMIT = 13; //Amps
-  private static final boolean INVERT_MOTOR = true;
+  // private static final double GEAR_RATIO = (5.0/1.0) * (3.0/1.0) * (54.0 / 22.0) * (74.0 / 16.0);
+  // private static final double DEGREES_PER_REV = 360.0;
+  // private static final int CURRENT_LIMIT = 13; //Amps
+  // private static final boolean INVERT_MOTOR = true;
 
   // Voltage needed to maintain horizontal arm position.
-  private static final double horizontalArbFF = 0.30;
+  private static final double horizontalArbFF = 0.30; //???
 
   public PivoterSubsystem() {
     pivoterMotor.setInverted(false);
@@ -62,7 +62,7 @@ public class PivoterSubsystem extends SubsystemBase {
 
     m_pidController.setSmartMotionMaxVelocity(MAX_VELOCITY_RPM, SMART_MOTION_SLOT);
     m_pidController.setSmartMotionMinOutputVelocity(MIN_VELOCITY_RPM, SMART_MOTION_SLOT);
-    m_pidController.setSmartMotionMaxAccel(MAXX_ACCELERATION_RPM_PER_SEC, SMART_MOTION_SLOT);
+    m_pidController.setSmartMotionMaxAccel(MAX_ACCELERATION_RPM_PER_SEC, SMART_MOTION_SLOT);
     m_pidController.setSmartMotionAllowedClosedLoopError(ALLOWED_ERROR, SMART_MOTION_SLOT);
         
   }
