@@ -9,6 +9,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // import edu.wpi.first.wpilibj2.command.Command;
@@ -28,13 +29,13 @@ public class PivoterSubsystem extends SubsystemBase {
   private final SparkMaxPIDController m_pidController;
 
   // private Gains gains = new Gains(1.0e-3, 3e-6, 0.000156, 0, 1, 0.75); //smart motion gains
-  private Gains gains = new Gains(0, 0, 0, 0.02, 0, 0.25); //smart motion gains
+  private Gains gains = new Gains(0.00025, 0, 0, 0.00025, 0, 0.25); //smart motion gains
 
 
   private static final int SMART_MOTION_SLOT = 0;
 
   // SmartMotion configs
-  private static final double MAX_VELOCITY_RPM = 2_000; // NEO free speed 5676 RPM
+  private static final double MAX_VELOCITY_RPM = 3_000; // NEO free speed 5676 RPM
   private static final double MIN_VELOCITY_RPM = 0;
   private static final double MAX_ACCELERATION_RPM_PER_SEC = 1_500;
   private static final double ALLOWED_ERROR = 0.1; //motor rotations
@@ -46,13 +47,17 @@ public class PivoterSubsystem extends SubsystemBase {
 
   // Voltage needed to maintain horizontal arm position.
   // private static final double horizontalArbFF = 0.30; //???
-  private static final double horizontalArbFF = 0.0; //???
+  private static final double horizontalArbFF = 0.00; //???
 
 
   public PivoterSubsystem() {
     pivoterMotor.setInverted(false);
     // secondPivoterMotor.setInverted(false);
     secondPivoterMotor.follow(pivoterMotor, true); // This inversts the motor and tells it to follow the other. 
+    pivoterMotor.setSmartCurrentLimit(70);
+    secondPivoterMotor.setSmartCurrentLimit(70);
+    
+
 
     m_pidController = pivoterMotor.getPIDController();
 
@@ -75,15 +80,7 @@ public class PivoterSubsystem extends SubsystemBase {
   * Pivoter Motor methods. 
   */
 
-  private double degreesToMotorRotations(double degrees) {
-    // return degrees/DEGREES_PER_REV * GEAR_RATIO;
-    return degrees / PivoterConstants.kPivoterRotationToDegree;
-  }
 
-  public double motorRotationsToDegrees(double rotations) {
-    // return (rotations / GEAR_RATIO) * DEGREES_PER_REV;
-    return rotations * PivoterConstants.kPivoterRotationToDegree;
-  }
 
     //  Run the motor to our inputted degrees. 
   public void pivot(double rotations) {
@@ -102,14 +99,8 @@ public class PivoterSubsystem extends SubsystemBase {
    * @return Arbitrary Feed-Forward (Volts)
    */
   public double getArbFF() {
-    double degrees = getPositionDegrees();
-    double radians = Math.toRadians(degrees);
-
+    double radians = Units.degreesToRadians(getPivoterDegrees());
     return Math.sin(radians) * horizontalArbFF;
-  }
-
-  public double getPositionDegrees() {
-    return motorRotationsToDegrees(pivoterEncoder.getPosition());
   }
 
 
@@ -118,27 +109,6 @@ public class PivoterSubsystem extends SubsystemBase {
     pivoterMotor.stopMotor();
     secondPivoterMotor.stopMotor();
   }
-
-  // public void pivotForward(){
-  //   pivot(0.125);
-  // }
-
-  // public void pivotToMin(){
-  //   pivot(-0.25); // Run pivot continously till we hit the switch, which it should do. 
-  // }
-
-  // public Command pivotManual(double speed) {
-  //   // Manual pivot command
-  //   return runOnce(
-  //       () -> {
-  //         if(minLimitSwitch.get() && (Math.signum(speed) < 0)){ // if the min limit switch is triggered and we're trying to go down. 
-  //           pivoterMotor.stopMotor();
-  //           pivoterEncoder.setPosition(0);
-  //         }else{
-  //           pivoterMotor.set(speed); // Else, run the speed we want to set. 
-  //         }
-  //       });
-  // }
 
 
   /*
@@ -157,7 +127,11 @@ public class PivoterSubsystem extends SubsystemBase {
 
   public double getPivoterDegrees(){
     // Multiply the position by the conversion factor that changes it from rotation to degrees. 
-    return pivoterEncoder.getPosition() * PivoterConstants.kPivoterRotationToDegree; 
+    return (14.036 + (pivoterEncoder.getPosition() * PivoterConstants.kPivoterRotationToDegree * 360)); 
+  }
+
+  public double convertRotToDegrees(double rotations){
+    return(14.036 + (rotations * PivoterConstants.kPivoterRotationToDegree * 360));
   }
   
   public void resetEncoder(){
@@ -189,10 +163,13 @@ public class PivoterSubsystem extends SubsystemBase {
   public void periodic() {
     // Print out pivoter degrees and speed
     // SmartDashboard.putBoolean("Motor Connected", pivoterMotor.con)
-    SmartDashboard.putNumber("PID Position:", getPositionDegrees()); // get the pivoter value in degrees. 
+    SmartDashboard.putNumber("Pivoter Degrees:", getPivoterDegrees()); // get the pivoter value in degrees. 
     SmartDashboard.putNumber("Pivoter Rotations:", getPivoterRotation()); // Get the pivoter encoder rotation.
     SmartDashboard.putNumber("Pivoter Speed:", getPivoterSpeed()); // Get the speed of the pivoter. 
+    SmartDashboard.putNumber("Pivoter Current:", pivoterMotor.getOutputCurrent()); // Get the speed of the pivoter. 
+    
     SmartDashboard.putBoolean("Pivot Switch:", getSwitch()); // Get the state of the limit switch. 
+
 
   }
 }

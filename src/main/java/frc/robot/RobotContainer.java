@@ -394,9 +394,12 @@ public class RobotContainer {
     // //OI.button6Aux.whileTrue(autoGrab);
     // OI.button6Aux.onTrue(stowGroundArm);
 
-    OI.button7Aux.onTrue(goToFeeder);
+    // OI.button7Aux.onTrue(new PivotToHighPosition(pivoterSub, PivoterConstants.kFeedPivoterValue));
+    OI.button4Aux.onTrue(new PivotToHighPosition(pivoterSub, 11.7));
+    OI.button5Aux.onTrue(new PivotToHighPosition(pivoterSub, 0));
+    // OI.button9Aux.onTrue(new PivotToHighPosition(pivoterSub, 1));
 
-    // OI.button7Aux.onTrue(goToHighCone);
+    OI.button7Aux.onTrue(new PivotToHighPosition(pivoterSub, 18));
     // OI.button8Aux.onTrue(goToMidCone);
     // OI.button9Aux.onTrue(goToHighCube);
     // OI.button10Aux.onTrue(goToMidCube);

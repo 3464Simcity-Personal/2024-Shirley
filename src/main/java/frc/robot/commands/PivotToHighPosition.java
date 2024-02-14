@@ -4,19 +4,19 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 // import frc.robot.Constants.PivoterConstants;
 import frc.robot.subsystems.PivoterSubsystem;
-import frc.robot.Constants;
 import frc.robot.Constants.PivoterConstants;
 
 public class PivotToHighPosition extends Command {
   /** Creates a new PivotToHighPosition. */
   private final PivoterSubsystem pivoterSub;
   private final double targetPosition;
-  private final int PIVOTER_ANGLE_TOLERANCE = 1;
-  private final int TARGET_POSITION_COUNT_THRESHOLD = 10;
-  private int targetPositionCount;
+  private final double PIVOTER_ANGLE_TOLERANCE = 0.5;
+  double pivoterPositionError;
 
   public PivotToHighPosition(PivoterSubsystem pivoterSub, double target) {
     this.pivoterSub = pivoterSub;
@@ -28,21 +28,23 @@ public class PivotToHighPosition extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    targetPositionCount = 0;
+    // targetPosition =
+    // targetPositionCount = 0;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    pivoterSub.pivot(targetPosition); // setpoint is rotations.
-    
-    double currPositionDegrees = pivoterSub.getPositionDegrees();
-    double targetPositionDegrees = pivoterSub.motorRotationsToDegrees(targetPosition);
-    double pivoterPositionError = Math.abs(targetPositionDegrees - currPositionDegrees);
-    if (pivoterPositionError < PIVOTER_ANGLE_TOLERANCE){
-      targetPositionCount++;
-    }
+    double targetPositionRotations = targetPosition;
+    pivoterSub.pivot(targetPositionRotations); // setpoint is rotations.
+    double currPositionRotations = pivoterSub.getPivoterRotation();
+    pivoterPositionError = Math.abs(targetPositionRotations - currPositionRotations);
 
+    SmartDashboard.putNumber("Pivoter Target Rotation", targetPositionRotations);
+    // SmartDashboard.putNumber("Pivoter Target Rotation", Units.rotationsToDegrees(targetPosition));
+    SmartDashboard.putNumber("Pivoter Reading", currPositionRotations);
+    SmartDashboard.putNumber("Pivoter Error", pivoterPositionError);
+ 
   }
 
   // Called once the command ends or is interrupted.
@@ -58,7 +60,6 @@ public class PivotToHighPosition extends Command {
     if(pivoterSub.getPivoterRotation() >= PivoterConstants.kPivoterMaxValue){
       return true;
     }
-    return (pivoterSub.getPivoterRotation() >= targetPosition) ||
-            (targetPositionCount > TARGET_POSITION_COUNT_THRESHOLD);
+    return (pivoterPositionError < PIVOTER_ANGLE_TOLERANCE);
   }
 }
