@@ -120,6 +120,6 @@ public class PivoterSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Pivoter Rotations:", getPivoterRotation()); // Get the pivoter encoder rotation.
     SmartDashboard.putNumber("Pivoter Speed:", getPivoterSpeed()); // Get the speed of the pivoter. 
     SmartDashboard.putBoolean("Pivot Switch:", getSwitch()); // Get the state of the limit switch. 
-
+    SmartDashboard.putNumber("Pivoter Current", pivoterMotor.getOutputCurrent());
   }
 }
