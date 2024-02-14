@@ -15,7 +15,7 @@ public class PivotToHighPosition extends Command {
   /** Creates a new PivotToHighPosition. */
   private final PivoterSubsystem pivoterSub;
   private final double targetPosition;
-  private final double PIVOTER_ANGLE_TOLERANCE = 0.5;
+  private final double PIVOTER_ANGLE_TOLERANCE = 0.75;
   double pivoterPositionError;
 
   public PivotToHighPosition(PivoterSubsystem pivoterSub, double target) {

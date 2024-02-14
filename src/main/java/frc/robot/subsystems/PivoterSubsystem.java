@@ -29,7 +29,7 @@ public class PivoterSubsystem extends SubsystemBase {
   private final SparkMaxPIDController m_pidController;
 
   // private Gains gains = new Gains(1.0e-3, 3e-6, 0.000156, 0, 1, 0.75); //smart motion gains
-  private Gains gains = new Gains(0.00025, 0, 0, 0.00025, 0, 0.25); //smart motion gains
+  private Gains gains = new Gains(0.00025, 0, 0, 0.00025, 0, 1); //smart motion gains
 
 
   private static final int SMART_MOTION_SLOT = 0;
@@ -54,8 +54,8 @@ public class PivoterSubsystem extends SubsystemBase {
     pivoterMotor.setInverted(false);
     // secondPivoterMotor.setInverted(false);
     secondPivoterMotor.follow(pivoterMotor, true); // This inversts the motor and tells it to follow the other. 
-    pivoterMotor.setSmartCurrentLimit(70);
-    secondPivoterMotor.setSmartCurrentLimit(70);
+    // pivoterMotor.setSmartCurrentLimit(70);
+    // secondPivoterMotor.setSmartCurrentLimit(70);
     
 
 
@@ -166,8 +166,7 @@ public class PivoterSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Pivoter Degrees:", getPivoterDegrees()); // get the pivoter value in degrees. 
     SmartDashboard.putNumber("Pivoter Rotations:", getPivoterRotation()); // Get the pivoter encoder rotation.
     SmartDashboard.putNumber("Pivoter Speed:", getPivoterSpeed()); // Get the speed of the pivoter. 
-    SmartDashboard.putNumber("Pivoter Current:", pivoterMotor.getOutputCurrent()); // Get the speed of the pivoter. 
-    
+    SmartDashboard.putNumber("Pivoter Current:", pivoterMotor.getOutputCurrent()); // Get the speed of the pivoter.     
     SmartDashboard.putBoolean("Pivot Switch:", getSwitch()); // Get the state of the limit switch. 
 
 

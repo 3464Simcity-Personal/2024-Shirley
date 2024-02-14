@@ -399,7 +399,7 @@ public class RobotContainer {
     OI.button5Aux.onTrue(new PivotToHighPosition(pivoterSub, 0));
     // OI.button9Aux.onTrue(new PivotToHighPosition(pivoterSub, 1));
 
-    OI.button7Aux.onTrue(new PivotToHighPosition(pivoterSub, 18));
+    OI.button7Aux.onTrue(new PivotToHighPosition(pivoterSub, 14));
     // OI.button8Aux.onTrue(goToMidCone);
     // OI.button9Aux.onTrue(goToHighCube);
     // OI.button10Aux.onTrue(goToMidCube);
