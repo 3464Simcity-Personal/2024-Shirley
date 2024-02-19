@@ -91,8 +91,8 @@ public final class Constants {
 
 
     // Encoder Conversion Factor
-    // public static final double kPivoterRotationToDegree = ((1 / 64) * (24 / 36) * 360);
-    public static final double kPivoterRotationToDegree = 3.75;
+    public static final double kPivoterRotationToDegree = (0.0104166667);
+    // public static final double kPivoterRotationToDegree = 3.75;
 
   }
 

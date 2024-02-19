@@ -321,6 +321,7 @@ public class RobotContainer {
   public final Command goToMidCube = new SequentialCommandGroup(/*new CloseGrabberCone(grabberSub),*/ pivotToMidCube /*extendToMidCube*/);
   public final Command goToLow = new SequentialCommandGroup(/*new CloseGrabberCone(grabberSub), */pivotToLow, extendToLow);
   public final Command goToGround = new SequentialCommandGroup(pivotUpToGround, /*new OpenGrabber(grabberSub), */ extendToGround /*openGrabber, pivotDownToGround*/);
+  
   public final Command goToFeeder = new SequentialCommandGroup(new PivotToHighPosition(pivoterSub, PivoterConstants.kFeedPivoterValue)/*,new OpenGrabber(grabberSub)*/);
 
   /*
@@ -377,28 +378,32 @@ public class RobotContainer {
 
     OI.povButtonUp.whileTrue(PivoterRotateUp);
     OI.povButtonDown.whileTrue(pivotMin);  
-    OI.povButtonLeft.whileTrue(retractExtender);
-    OI.povButtonRight.whileTrue(extendExtender);
-    OI.triggerAux.whileTrue(suck);
-    // OI.triggerAux.onFalse();
+    // OI.povButtonLeft.whileTrue(retractExtender);
+    // OI.povButtonRight.whileTrue(extendExtender);
+    // OI.triggerAux.whileTrue(suck);
+    // // OI.triggerAux.onFalse();
     
 
 
-    OI.button2Aux.whileTrue(spit); // Open grabber 
-    // OI.button4Aux.toggleOnTrue(grabCone); // Grab at a strong grip. 
-    // OI.button5Aux.onTrue(stopGrabber);
-    OI.button3Aux.onTrue(goToGround); // Pivot to the ground position. 
-    OI.button4Aux.onTrue(goToFeeder);
-    OI.button5Aux.onTrue(stowArm);
-    //OI.button6Aux.whileTrue(autoGrab);
-    OI.button6Aux.onTrue(stowGroundArm);
+    // OI.button2Aux.whileTrue(spit); // Open grabber 
+    // // OI.button4Aux.toggleOnTrue(grabCone); // Grab at a strong grip. 
+    // // OI.button5Aux.onTrue(stopGrabber);
+    // OI.button3Aux.onTrue(goToGround); // Pivot to the ground position. 
+    // OI.button4Aux.onTrue(goToFeeder);
+    // OI.button5Aux.onTrue(stowArm);
+    // //OI.button6Aux.whileTrue(autoGrab);
+    // OI.button6Aux.onTrue(stowGroundArm);
 
+    // OI.button7Aux.onTrue(new PivotToHighPosition(pivoterSub, PivoterConstants.kFeedPivoterValue));
+    OI.button4Aux.onTrue(new PivotToHighPosition(pivoterSub, 11.7));
+    OI.button5Aux.onTrue(new PivotToHighPosition(pivoterSub, 0));
+    // OI.button9Aux.onTrue(new PivotToHighPosition(pivoterSub, 1));
 
-    OI.button7Aux.onTrue(goToHighCone);
-    OI.button8Aux.onTrue(goToMidCone);
-    OI.button9Aux.onTrue(goToHighCube);
-    OI.button10Aux.onTrue(goToMidCube);
-    OI.button11Aux.onTrue(goToLow);
+    OI.button7Aux.onTrue(new PivotToHighPosition(pivoterSub, 14));
+    // OI.button8Aux.onTrue(goToMidCone);
+    // OI.button9Aux.onTrue(goToHighCube);
+    // OI.button10Aux.onTrue(goToMidCube);
+    // OI.button11Aux.onTrue(goToLow);
     OI.button12Aux.whileTrue(stopFeedForward);
     // OI.button12Aux.onTrue(new SequentialCommandGroup(new InstantCommand(grabberSub::stopMotor, grabberSub), new InstantCommand(grabberSub::resetGrabberDistance, grabberSub)));
 
