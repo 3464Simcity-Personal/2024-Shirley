@@ -9,6 +9,8 @@ import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.ExtenderConstants;
 import frc.robot.Constants.PivoterConstants;
 import frc.robot.commands.*;
+import frc.robot.commands.PID_Commands.ManualPivot;
+import frc.robot.commands.PID_Commands.PivotToHighPosition;
 import frc.robot.subsystems.*;
 
 import java.nio.file.StandardOpenOption;
@@ -376,8 +378,8 @@ public class RobotContainer {
      * Aux Stick
      */
 
-    OI.povButtonUp.whileTrue(PivoterRotateUp);
-    OI.povButtonDown.whileTrue(pivotMin);  
+    // OI.povButtonUp.whileTrue(PivoterRotateUp);
+    // OI.povButtonDown.whileTrue(pivotMin);  
     // OI.povButtonLeft.whileTrue(retractExtender);
     // OI.povButtonRight.whileTrue(extendExtender);
     // OI.triggerAux.whileTrue(suck);
@@ -395,16 +397,22 @@ public class RobotContainer {
     // OI.button6Aux.onTrue(stowGroundArm);
 
     // OI.button7Aux.onTrue(new PivotToHighPosition(pivoterSub, PivoterConstants.kFeedPivoterValue));
-    OI.button4Aux.onTrue(new PivotToHighPosition(pivoterSub, 11.7));
-    OI.button5Aux.onTrue(new PivotToHighPosition(pivoterSub, 0));
+    // OI.button4Aux.onTrue(new PivotToHighPosition(pivoterSub, 11.7));
+        // OI.povButtonUp.whileTrue(PivoterRotateUp);
+    // OI.povButtonDown.whileTrue(pivotMin);  
+
+
     // OI.button9Aux.onTrue(new PivotToHighPosition(pivoterSub, 1));
 
     OI.button7Aux.onTrue(new PivotToHighPosition(pivoterSub, 14));
-    // OI.button8Aux.onTrue(goToMidCone);
-    // OI.button9Aux.onTrue(goToHighCube);
+    OI.button9Aux.onTrue(new PivotToHighPosition(pivoterSub, 11.7));
+    OI.button11Aux.onTrue(new PivotToHighPosition(pivoterSub, 0));
+
+    OI.button8Aux.onTrue(new ManualPivot(pivoterSub, true).andThen(new WaitCommand(1)));
+    OI.button10Aux.onTrue(new ManualPivot(pivoterSub, false).andThen(new WaitCommand(1)));
     // OI.button10Aux.onTrue(goToMidCube);
     // OI.button11Aux.onTrue(goToLow);
-    OI.button12Aux.whileTrue(stopFeedForward);
+    // OI.button12Aux.whileTrue(stopFeedForward);
     // OI.button12Aux.onTrue(new SequentialCommandGroup(new InstantCommand(grabberSub::stopMotor, grabberSub), new InstantCommand(grabberSub::resetGrabberDistance, grabberSub)));
 
     // OI.button12Aux.onTrue(new InstantCommand(grabberSub::stopMotor, grabberSub));
