@@ -84,13 +84,18 @@ public class PivoterSubsystem extends SubsystemBase {
 
     //  Run the motor to our inputted degrees. 
   public void pivot(double rotations) {
-    m_pidController.setReference(
-      rotations,
-      // CANSparkMax.ControlType.kPosition,
-      CANSparkMax.ControlType.kSmartMotion,
-      SMART_MOTION_SLOT,
-      getArbFF()
-    );
+    if ((getPivoterRotation() <= PivoterConstants.kPivoterMaxValue) || getPivoterRotation() >= 0){
+      System.out.println("ABORT");
+    }else{
+      m_pidController.setReference(
+        rotations,
+        // CANSparkMax.ControlType.kPosition,
+        CANSparkMax.ControlType.kSmartMotion,
+        SMART_MOTION_SLOT,
+        getArbFF()
+      );  
+    }
+
   }
 
     /**
