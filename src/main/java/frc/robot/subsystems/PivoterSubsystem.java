@@ -84,7 +84,8 @@ public class PivoterSubsystem extends SubsystemBase {
 
     //  Run the motor to our inputted degrees. 
   public void pivot(double rotations) {
-    if ((getPivoterRotation() <= PivoterConstants.kPivoterMaxValue) || getPivoterRotation() >= 0){
+    if ((rotations >= PivoterConstants.kPivoterMaxValue) 
+    || rotations < 0){
       System.out.println("ABORT");
     }else{
       m_pidController.setReference(
