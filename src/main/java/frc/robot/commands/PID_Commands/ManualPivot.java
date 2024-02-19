@@ -31,11 +31,12 @@ public class ManualPivot extends Command {
   public void initialize() {
     currentPivoterReading = pivoterSub.getPivoterRotation();
     if (isUp){
-      target = currentPivoterReading + 0.25;
+      target = currentPivoterReading + 1.5;
     }else{
-      target = currentPivoterReading - 0.25;
+      target = currentPivoterReading - 1;
     }
     if ((target >= PivoterConstants.kPivoterMaxValue) || target <= 0){
+      System.out.println("ENDING");
       // end command automatically if we're done. 
       end(false);
     }
@@ -48,12 +49,12 @@ public class ManualPivot extends Command {
     double currPositionRotations = pivoterSub.getPivoterRotation();
     pivoterPositionError = Math.abs(target - currPositionRotations);
 
-    SmartDashboard.putNumber("Pivoter Target Rotation", target);
+    SmartDashboard.putNumber("Manual Pivoter Target Rotation", target);
     // SmartDashboard.putNumber("Pivoter Target Rotation", Units.rotationsToDegrees(targetPosition));
-    SmartDashboard.putNumber("Pivoter Reading", currPositionRotations);
-    SmartDashboard.putNumber("Pivoter Error", pivoterPositionError);
+    SmartDashboard.putNumber("Manual Pivoter Reading", currPositionRotations);
+    SmartDashboard.putNumber("Manual Pivoter Error", pivoterPositionError);
  
-    // pivoterSub.pivot(target); // setpoint is rotations.
+    pivoterSub.pivot(target); // setpoint is rotations.
   }
 
   // Called once the command ends or is interrupted.

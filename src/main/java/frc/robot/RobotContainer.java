@@ -408,9 +408,9 @@ public class RobotContainer {
     OI.button9Aux.onTrue(new PivotToHighPosition(pivoterSub, 11.7));
     OI.button11Aux.onTrue(new PivotToHighPosition(pivoterSub, 0));
 
-    OI.button8Aux.onTrue(new ManualPivot(pivoterSub, true).andThen(new WaitCommand(1)));
-    OI.button10Aux.onTrue(new ManualPivot(pivoterSub, false).andThen(new WaitCommand(1)));
-    // OI.button10Aux.onTrue(goToMidCube);
+    OI.button8Aux.onTrue(new ManualPivot(pivoterSub, true).andThen(new WaitCommand(0.25)));
+    OI.button10Aux.onTrue(new ManualPivot(pivoterSub, false).andThen(new WaitCommand(0.25)));
+    // OI.button10Aux.onTrue(goToMidCube)
     // OI.button11Aux.onTrue(goToLow);
     // OI.button12Aux.whileTrue(stopFeedForward);
     // OI.button12Aux.onTrue(new SequentialCommandGroup(new InstantCommand(grabberSub::stopMotor, grabberSub), new InstantCommand(grabberSub::resetGrabberDistance, grabberSub)));
