@@ -72,7 +72,7 @@ public class ChaseTagCommand extends Command {
     xController.reset(robotPose.getX());
     yController.reset(robotPose.getY());
 
-    tab.add("Chase", count).withPosition(10, 10).withSize(2, 0);
+    tab.addInteger("Chase", ()->count).withPosition(10, 10).withSize(2, 0);
   }
 
   @Override
@@ -122,7 +122,7 @@ public class ChaseTagCommand extends Command {
     if (lastTarget == null) {
       // No target has been visible
       // swerveSubsystem.stopModules();
-      photonCamera.setLED(VisionLEDMode.kOff);
+      photonCamera.setLED(VisionLEDMode.kOn);
     } else {
       // Drive to the target
       var xSpeed = xController.calculate(robotPose.getX());
