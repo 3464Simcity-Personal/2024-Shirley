@@ -153,4 +153,10 @@ public class ChaseTagCommand extends Command {
     // swerveSubsystem.stopModules();
   }
 
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() {
+      return false;
+    }
+  
 }
