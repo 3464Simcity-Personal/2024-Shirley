@@ -3,11 +3,16 @@ package frc.robot.subsystems;
 import static edu.wpi.first.math.util.Units.degreesToRadians;
 import static edu.wpi.first.math.util.Units.inchesToMeters;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -20,22 +25,29 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.DriveConstants;
+// import frc.robot.Constants.DriveConstants;
 
 public class PoseEstimatorSubsystem extends SubsystemBase {
 
   //TODO: fix constant values
   public static Transform3d CAMERA_TO_ROBOT =
     new Transform3d(new Translation3d(-0.3425, 0.0, -0.233), new Rotation3d());
+   
+    /** Physical location of the apriltag camera on the robot, relative to the center of the robot. */
+    public static final Transform3d APRILTAG_CAMERA_TO_ROBOT = new Transform3d(
+        new Translation3d(-0.06, 0.2, -0.2127),
+        new Rotation3d(0.0, degreesToRadians(15.0), degreesToRadians(-3.0)));
+    
   
     public static final Transform3d ROBOT_TO_CAMERA = CAMERA_TO_ROBOT.inverse();
   
   private final PhotonCamera photonCamera;
-  private final SwerveSubsystem swerveSubsystem = SwerveSubsystem.getInstance();
+  private final DrivetrainSubsystem swerveSubsystem;
 
   // Ordered list of target poses by ID
   // TODO - need full list
@@ -61,24 +73,35 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
    */
   private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(10));
 
-  private final SwerveDrivePoseEstimator poseEstimator;
+  //private final SwerveDrivePoseEstimator poseEstimator;
 
   private final Field2d field2d = new Field2d();
 
   private double previousPipelineTimestamp = 0;
 
-  public PoseEstimatorSubsystem(PhotonCamera photonCamera) {
+  private PhotonPoseEstimator photonPoseEstimator;
+
+  public PoseEstimatorSubsystem(PhotonCamera photonCamera, DrivetrainSubsystem swerveSubsystem) {
     this.photonCamera = photonCamera;
+    this.swerveSubsystem = swerveSubsystem;
 
     ShuffleboardTab tab = Shuffleboard.getTab("Vision");
 
-    poseEstimator =  new SwerveDrivePoseEstimator(
-        DriveConstants.kDriveKinematics,
-        swerveSubsystem.getGyroscopeRotation(),
-        swerveSubsystem.getModulePositions(),
-        new Pose2d(),
-        stateStdDevs,
-        visionMeasurementStdDevs);
+    PhotonPoseEstimator photonPoseEstimator = null;
+    try {
+      var layout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
+      // PV estimates will always be blue, they'll get flipped by robot thread
+      layout.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
+      if (photonCamera != null) {
+        photonPoseEstimator = new PhotonPoseEstimator(
+            layout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, photonCamera, APRILTAG_CAMERA_TO_ROBOT.inverse());
+      }
+    } catch(Exception e) {
+      DriverStation.reportError("Failed to load AprilTagFieldLayout", e.getStackTrace());
+      photonPoseEstimator = null;
+    }
+    this.photonPoseEstimator = photonPoseEstimator;
+;
     
     tab.addString("Pose", this::getFomattedPose).withPosition(0, 0).withSize(2, 0);
     tab.add("Field", field2d).withPosition(2, 0).withSize(6, 4);
@@ -119,7 +142,8 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
   }
 
   public Pose2d getCurrentPose() {
-    return poseEstimator.getEstimatedPosition();
+    // return poseEstimator.getEstimatedPosition();
+    return new Pose2d();
   }
 
   /**
@@ -129,10 +153,10 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
    * @param newPose new pose
    */
   public void setCurrentPose(Pose2d newPose) {
-    poseEstimator.resetPosition(
-      swerveSubsystem.getGyroscopeRotation(),
-      swerveSubsystem.getModulePositions(),
-      newPose);
+    // poseEstimator.resetPosition(
+    //   swerveSubsystem.getGyroscopeRotation(),
+    //   swerveSubsystem.getModulePositions(),
+    //   newPose);
   }
 
   /**
@@ -140,7 +164,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
    * what "forward" is for field oriented driving.
    */
   public void resetFieldPosition() {
-    setCurrentPose(new Pose2d());
+    //setCurrentPose(new Pose2d());
   }
 
 }

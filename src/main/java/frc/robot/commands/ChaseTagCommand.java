@@ -17,8 +17,11 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.DrivetrainSubsystem;
+// import frc.robot.subsystems.SwerveSubsystem;
 
 public class ChaseTagCommand extends Command {
   
@@ -33,7 +36,7 @@ public class ChaseTagCommand extends Command {
           new Rotation3d(0.0, 0.0, Math.PI));
 
   private final PhotonCamera photonCamera;
-  private final SwerveSubsystem swerveSubsystem = SwerveSubsystem.getInstance();
+  private final DrivetrainSubsystem swerveSubsystem;
   private final Supplier<Pose2d> poseProvider;
 
   private final ProfiledPIDController xController = new ProfiledPIDController(3, 0, 0, X_CONSTRAINTS);
@@ -42,11 +45,16 @@ public class ChaseTagCommand extends Command {
 
   private PhotonTrackedTarget lastTarget;
 
+  private int count = 0;
+      ShuffleboardTab tab = Shuffleboard.getTab("Vision");
+
   public ChaseTagCommand(
         PhotonCamera photonCamera, 
-        Supplier<Pose2d> poseProvider) {
+        Supplier<Pose2d> poseProvider,
+        DrivetrainSubsystem swerveSubsystem) {
     this.photonCamera = photonCamera;
     this.poseProvider = poseProvider;
+    this.swerveSubsystem = swerveSubsystem;
 
     xController.setTolerance(0.2);
     yController.setTolerance(0.2);
@@ -63,10 +71,17 @@ public class ChaseTagCommand extends Command {
     omegaController.reset(robotPose.getRotation().getRadians());
     xController.reset(robotPose.getX());
     yController.reset(robotPose.getY());
+
+    tab.add("Chase", count).withPosition(10, 10).withSize(2, 0);
   }
 
   @Override
   public void execute() {
+
+    count = count + 1;
+
+    System.out.println("#############################################################");
+
     var robotPose2d = poseProvider.get();
     var robotPose = 
         new Pose3d(
@@ -135,7 +150,7 @@ public class ChaseTagCommand extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    swerveSubsystem.stopModules();
+    // swerveSubsystem.stopModules();
   }
 
 }

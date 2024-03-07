@@ -15,6 +15,8 @@ import java.nio.file.StandardOpenOption;
 
 import javax.swing.text.StyleContext.SmallAttributeSet;
 
+import org.photonvision.PhotonCamera;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // import edu.wpi.first.wpilibj.SerialPort.StopBits;
 // import java.util.Arrays;
@@ -40,6 +42,8 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
+import frc.robot.subsystems.PoseEstimatorSubsystem;
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -62,7 +66,7 @@ public class RobotContainer {
   private final BalanceHoldPIDSubsystem balanceHoldSub = new BalanceHoldPIDSubsystem(driveSub);
   private final BalancePIDSubsystem balanceSub = new BalancePIDSubsystem(driveSub, gyroSub);
   private final DrivetrainRamp driveRamp = new DrivetrainRamp(1.33, 2.5); // These values may be wrong. 
-  private final PhotonVisionSubsystem photonSub = new PhotonVisionSubsystem(); // I just want to read the values in periodic().
+  //private final PhotonVisionSubsystem photonSub = new PhotonVisionSubsystem(); // I just want to read the values in periodic().
   private final LEDSubsystem ledSub = new LEDSubsystem();
   private final InstantCommand ledYellow = new InstantCommand(ledSub::yellow,ledSub);
   private final InstantCommand ledPurple = new InstantCommand(ledSub::purple,ledSub); 
@@ -109,7 +113,7 @@ public class RobotContainer {
   /*
    * Photonvision Commands
    */
-  private final TargetCenterPIDCommand photonCenter = new TargetCenterPIDCommand(photonSub, driveSub);
+  //private final TargetCenterPIDCommand photonCenter = new TargetCenterPIDCommand(photonSub, driveSub);
 
   /*
    * Store Commands: We need to create the commands again to follow the syntax of creating sequential commands. 
@@ -332,6 +336,11 @@ public class RobotContainer {
   // public final BalanceDistance balance = new BalanceDistance(driveSub, balanceSub);
   // public final BalanceHold balanceHold = new BalanceHold(balanceHoldSub, driveSub);
    
+  private final PhotonCamera photonCamera = new PhotonCamera("Speaker_Camera");
+  private final PoseEstimatorSubsystem poseEstimator = new PoseEstimatorSubsystem(photonCamera, driveSub);          
+  private final ChaseTagCommand chaseTagCommand = 
+    new ChaseTagCommand(photonCamera, poseEstimator::getCurrentPose, driveSub);
+
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -359,7 +368,7 @@ public class RobotContainer {
     /*
      * Controller 
      */
-
+/* 
     OI.buttonRB.whileTrue(photonCenter);
     OI.buttonLB.toggleOnTrue(new AutoFeederDistance(driveSub, ultrasonicSubsystem, ledSub, DrivetrainConstants.kFeederDistance));
     OI.buttonB.onTrue(ledYellow);
@@ -372,10 +381,7 @@ public class RobotContainer {
     OI.buttonY.toggleOnTrue(new BalanceHold(balanceHoldSub, driveSub));
     
     
-    /*
-     * Aux Stick
-     */
-
+   
     OI.povButtonUp.whileTrue(PivoterRotateUp);
     OI.povButtonDown.whileTrue(pivotMin);  
     // OI.povButtonLeft.whileTrue(retractExtender);
@@ -410,7 +416,8 @@ public class RobotContainer {
     // OI.button11Aux.onTrue(new AutoDriveBackward(driveSub, 12));
     // OI.button12Aux.onTrue(); 
     // OI.button12Aux.onTrue(drivetrainEncoderReset);
- 
+*/ 
+    OI.button12Aux.whileTrue(chaseTagCommand);
 
     }
 
