@@ -417,7 +417,7 @@ public class RobotContainer {
     // OI.button12Aux.onTrue(); 
     // OI.button12Aux.onTrue(drivetrainEncoderReset);
 */ 
-    OI.button12Aux.whileTrue(chaseTagCommand);
+    OI.button11Aux.whileTrue(chaseTagCommand);
 
     }
 
