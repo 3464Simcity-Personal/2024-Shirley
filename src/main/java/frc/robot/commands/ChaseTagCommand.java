@@ -36,7 +36,7 @@ public class ChaseTagCommand extends Command {
           new Rotation3d(0.0, 0.0, Math.PI));
 
   private final PhotonCamera photonCamera;
-  private final DrivetrainSubsystem swerveSubsystem;
+  private final DrivetrainSubsystem drivetrainSub;
   private final Supplier<Pose2d> poseProvider;
 
   private final ProfiledPIDController xController = new ProfiledPIDController(3, 0, 0, X_CONSTRAINTS);
@@ -45,25 +45,28 @@ public class ChaseTagCommand extends Command {
 
   private PhotonTrackedTarget lastTarget;
 
+  private String drive = "stop";
+
   private Pose2d goalPose = new Pose2d();
       ShuffleboardTab tab = Shuffleboard.getTab("Vision");
 
   public ChaseTagCommand(
         PhotonCamera photonCamera, 
         Supplier<Pose2d> poseProvider,
-        DrivetrainSubsystem swerveSubsystem) {
+        DrivetrainSubsystem drivetrainSub) {
     this.photonCamera = photonCamera;
     this.poseProvider = poseProvider;
-    this.swerveSubsystem = swerveSubsystem;
+    this.drivetrainSub = drivetrainSub;
 
     xController.setTolerance(0.2);
     yController.setTolerance(0.2);
     omegaController.setTolerance(Units.degreesToRadians(3));
     omegaController.enableContinuousInput(-Math.PI, Math.PI);
 
-    addRequirements(swerveSubsystem);
+    addRequirements(drivetrainSub);
 
     tab.addString("Goal Pose", this::getFomattedPose).withPosition(0, 4).withSize(2, 2);
+    tab.addString("Drive", ()-> drive).withPosition(0, 6).withSize(2, 2);
 
   }
 
@@ -110,7 +113,7 @@ public class ChaseTagCommand extends Command {
         // Transform the tag's pose to set our goal
         goalPose = targetPose.transformBy(TAG_TO_GOAL).toPose2d();
 
-        System.out.println(goalPose);
+        //System.out.println(goalPose);
 
         // Drive
         xController.setGoal(goalPose.getX());
@@ -122,7 +125,8 @@ public class ChaseTagCommand extends Command {
     
     if (lastTarget == null) {
       // No target has been visible
-      // swerveSubsystem.stopModules();
+      drivetrainSub.stopDrive();
+      drive = "stop";
       photonCamera.setLED(VisionLEDMode.kOff);
     } else {
       // Drive to the target
@@ -141,18 +145,21 @@ public class ChaseTagCommand extends Command {
         omegaSpeed = 0;
       }
 
+      driveToTarget();
+
       // swerveSubsystem.drive(
       //   ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, omegaSpeed, robotPose2d.getRotation()));
 
       photonCamera.setLED(VisionLEDMode.kOn);
       lastTarget = null;
     }
+      System.out.println(drive);
     
   }
 
   @Override
   public void end(boolean interrupted) {
-    // swerveSubsystem.stopModules();
+     drivetrainSub.stopDrive();
   }
 
     // Returns true when the command should end.
@@ -167,6 +174,20 @@ public class ChaseTagCommand extends Command {
           pose.getX(), 
           pose.getY(),
           pose.getRotation().getDegrees());
+    }
+
+    private void driveToTarget() {
+      var x = goalPose.getX();
+      if (x > -0.45) { //forward
+        drive = "forward";
+        drivetrainSub.arcadeDrive(0.1, 0);
+      } else if (x < -0.55) { //backward
+        drive = "backward";
+        drivetrainSub.arcadeDrive(-0.1, 0);
+      } else {
+        drive = "stop";
+        drivetrainSub.stopDrive();
+      }
     }
   
 }
