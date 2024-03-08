@@ -178,10 +178,10 @@ public class ChaseTagCommand extends Command {
     var x = goalPose.getX();
     if (x > -0.45) { // forward
       drive = "forward";
-      drivetrainSub.arcadeDrive(0.1, 0);
+      drivetrainSub.arcadeDrive(0.2, 0);
     } else if (x < -0.55) { // backward
       drive = "backward";
-      drivetrainSub.arcadeDrive(-0.1, 0);
+      drivetrainSub.arcadeDrive(-0.2, 0);
     } else {
       drive = "stop";
       drivetrainSub.stopDrive();
