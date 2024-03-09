@@ -47,6 +47,8 @@ public class ChaseTagCommand extends Command {
   private String drive = "stop";
 
   private Pose2d goalPose = new Pose2d();
+  private Transform3d camToTarget = new Transform3d();
+
   ShuffleboardTab tab = Shuffleboard.getTab("Vision");
 
   public ChaseTagCommand(
@@ -65,7 +67,8 @@ public class ChaseTagCommand extends Command {
     addRequirements(drivetrainSub);
 
     tab.addString("Goal Pose", this::getFomattedPose).withPosition(0, 4).withSize(2, 2);
-    tab.addString("Drive", () -> drive).withPosition(0, 6).withSize(2, 2);
+    tab.addString("Drive", () -> drive).withPosition(0, 5).withSize(2, 2);
+    tab.addString("CameraToTarget", this::getFomattedTransform3d).withPosition(0, 5).withSize(2, 2);
 
   }
 
@@ -104,7 +107,7 @@ public class ChaseTagCommand extends Command {
         var cameraPose = robotPose.transformBy(ROBOT_TO_CAMERA);
 
         // Trasnform the camera's pose to the target's pose
-        var camToTarget = target.getBestCameraToTarget();
+        camToTarget = target.getBestCameraToTarget();
         var targetPose = cameraPose.transformBy(camToTarget);
 
         // Transform the tag's pose to set our goal
@@ -118,6 +121,7 @@ public class ChaseTagCommand extends Command {
         omegaController.setGoal(goalPose.getRotation().getRadians());
       }
     } else {
+      lastTarget = null;
     }
 
     if (lastTarget == null) {
@@ -149,10 +153,7 @@ public class ChaseTagCommand extends Command {
       // robotPose2d.getRotation()));
 
       photonCamera.setLED(VisionLEDMode.kOn);
-      lastTarget = null;
     }
-    System.out.println(drive);
-
   }
 
   @Override
@@ -174,18 +175,43 @@ public class ChaseTagCommand extends Command {
         pose.getRotation().getDegrees());
   }
 
+  private String getFomattedTransform3d() {
+    var transform3d = camToTarget;
+    return String.format("(%.2f, %.2f, %.2f) %.2f angle, %.2f degrees2d, %.2f pitch",
+        transform3d.getX(),
+        transform3d.getY(),
+        transform3d.getZ(),
+        transform3d.getRotation().getAngle(),
+        transform3d.getRotation().toRotation2d().getDegrees(),
+        lastTarget == null ? 0 : lastTarget.getPitch());
+  }
+
   private void driveToTarget() {
     var x = goalPose.getX();
+    var speed = 0.0;
+    var degrees = camToTarget.getRotation().toRotation2d().getDegrees();
+    var rotation = 0.0;
+
+    if (degrees < 0) {
+      rotation = 0.2;
+    } else if (degrees > 0) {
+      rotation = -0.2;
+    }
+
     if (x > -0.45) { // forward
       drive = "forward";
-      drivetrainSub.arcadeDrive(0.2, 0);
+      speed = 0.2;
     } else if (x < -0.55) { // backward
       drive = "backward";
-      drivetrainSub.arcadeDrive(-0.2, 0);
+      speed = -0.2;
     } else {
       drive = "stop";
-      drivetrainSub.stopDrive();
+      speed = 0.0;
     }
+
+    if (speed != 0.0 || rotation != 0.0)
+      drivetrainSub.arcadeDrive(speed, rotation);
+
   }
 
 }
