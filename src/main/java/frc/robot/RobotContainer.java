@@ -339,7 +339,7 @@ public class RobotContainer {
   private final PhotonCamera photonCamera = new PhotonCamera("Speaker_Camera");
   private final PoseEstimatorSubsystem poseEstimator = new PoseEstimatorSubsystem(photonCamera, driveSub);          
   private final ChaseTagCommand chaseTagCommand = 
-    new ChaseTagCommand(photonCamera, poseEstimator::getCurrentPose, driveSub);
+    new ChaseTagCommand(photonCamera, poseEstimator::getCurrentPose, driveSub, pivoterSub);
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */

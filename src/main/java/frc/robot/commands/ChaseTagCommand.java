@@ -36,6 +36,7 @@ public class ChaseTagCommand extends Command {
 
   private final PhotonCamera photonCamera;
   private final DrivetrainSubsystem drivetrainSub;
+  private final PivoterSubsystem pivoterSub;
   private final Supplier<Pose2d> poseProvider;
 
   private final ProfiledPIDController xController = new ProfiledPIDController(3, 0, 0, X_CONSTRAINTS);
@@ -54,10 +55,12 @@ public class ChaseTagCommand extends Command {
   public ChaseTagCommand(
       PhotonCamera photonCamera,
       Supplier<Pose2d> poseProvider,
-      DrivetrainSubsystem drivetrainSub) {
+      DrivetrainSubsystem drivetrainSub,
+      PivoterSubsystem pivoterSub) {
     this.photonCamera = photonCamera;
     this.poseProvider = poseProvider;
     this.drivetrainSub = drivetrainSub;
+    this.pivoterSub = pivoterSub;
 
     xController.setTolerance(0.2);
     yController.setTolerance(0.2);
@@ -212,6 +215,23 @@ public class ChaseTagCommand extends Command {
     if (speed != 0.0 || rotation != 0.0)
       drivetrainSub.arcadeDrive(speed, rotation);
 
+  }
+
+  private void pivotToDegrees(){
+
+    var degrees = Math.atan2(
+      camToTarget.getZ(),
+      Math.sqrt(Math.pow(camToTarget.getX(), 2) + Math.pow(camToTarget.getY(), 2))) * 180 / Math.PI;
+
+    var rotations = pivoterSub.degreesToMotorRotations(degrees);
+
+    if (rotations > PivoterConstants.kPivoterMaxValue){
+      rotations = PivoterConstants.kPivoterMaxValue;
+    } else if (rotations < 0){
+      rotations = 0;
+    }
+
+    pivoterSub.pivot(rotation);
   }
 
 }
