@@ -189,12 +189,12 @@ public class ChaseTagCommand extends Command {
   private void driveToTarget() {
     var x = goalPose.getX();
     var speed = 0.0;
-    var degrees = camToTarget.getRotation().toRotation2d().getDegrees();
+    var y = camToTarget.getY();
     var rotation = 0.0;
 
-    if (degrees < 0) {
+    if (y < -0.2) {
       rotation = 0.2;
-    } else if (degrees > 0) {
+    } else if (y > 0.2) {
       rotation = -0.2;
     }
 
