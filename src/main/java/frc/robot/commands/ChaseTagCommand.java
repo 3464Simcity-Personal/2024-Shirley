@@ -20,8 +20,10 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.PivoterConstants;
 import frc.robot.subsystems.DrivetrainSubsystem;
 // import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.PivoterSubsystem;
 
 public class ChaseTagCommand extends Command {
 
@@ -231,7 +233,7 @@ public class ChaseTagCommand extends Command {
       rotations = 0;
     }
 
-    pivoterSub.pivot(rotation);
+    pivoterSub.pivot(rotations);
   }
 
 }

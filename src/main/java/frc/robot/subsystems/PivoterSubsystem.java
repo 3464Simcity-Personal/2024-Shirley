@@ -75,7 +75,7 @@ public class PivoterSubsystem extends SubsystemBase {
   * Pivoter Motor methods. 
   */
 
-  private double degreesToMotorRotations(double degrees) {
+  public double degreesToMotorRotations(double degrees) {
     // return degrees/DEGREES_PER_REV * GEAR_RATIO;
     return degrees / PivoterConstants.kPivoterRotationToDegree;
   }
